@@ -1,6 +1,8 @@
 {
-  "name": "openclaw-render",
+  "name": "my-openclaw",
   "version": "1.0.0",
+  "description": "OpenClaw bridge for Arch Linux",
+  "main": "index.js",
   "scripts": {
     "start": "openclaw start"
   },
