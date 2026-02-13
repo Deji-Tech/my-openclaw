@@ -23,3 +23,9 @@ COPY . .
 
 # Start OpenClaw
 CMD ["npx", "openclaw", "start"]
+
+Environment Variable: ENV PORT=4734
+
+Expose: EXPOSE 4734
+
+Start Command: CMD ["npx", "openclaw", "start", "--port", "4734"]
