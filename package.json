@@ -2,7 +2,7 @@
   "name": "openclaw-render",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx openclaw start"
+    "start": "openclaw start"
   },
   "dependencies": {
     "openclaw": "latest"
