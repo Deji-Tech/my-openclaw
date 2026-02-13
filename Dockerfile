@@ -1,7 +1,7 @@
-# 1. Use the Slim version of Debian (saves ~200MB of image space)
+# 1. Use Debian Slim to stay within Render's 512MB RAM
 FROM node:22-bookworm-slim
 
-# 2. Install essential build tools (required for node-llama-cpp)
+# 2. Install essential build tools for AI components
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
@@ -12,18 +12,17 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# 3. Copy dependencies first
+# 3. Copy your project files
 COPY package*.json ./
 
-# 4. Install only production dependencies to save RAM
-RUN npm install --production
+# 4. Install only production dependencies
+RUN npm install --omit=dev
 
-# 5. Copy the rest of your app files
+# 5. Copy the rest of your files
 COPY . .
 
-# 6. Render needs port 10000 by default
+# 6. Render requires port 10000 for web services
 EXPOSE 10000
 
-# 7. CRITICAL: Max-old-space-size limits RAM usage to 350MB
-# This prevents the "Heap out of memory" crash you just saw
-CMD ["sh", "-c", "node --max-old-space-size=350 npx openclaw start --port ${PORT:-10000}"]
+# 7. FIXED COMMAND: Prevents "Module Not Found" and "Out of Memory"
+CMD ["sh", "-c", "npx --node-options='--max-old-space-size=350' openclaw start --port ${PORT:-10000}"]
