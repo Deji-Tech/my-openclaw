@@ -1,7 +1,7 @@
-# Use a standard Debian-based Node image (NOT Alpine)
+# 1. Use Debian (solves the 'glibc' and 'Alpine' errors)
 FROM node:22-bookworm
 
-# Install the build tools OpenClaw needs to compile AI components
+# 2. Install the build tools missing in your previous logs
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
@@ -12,20 +12,18 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy your package.json
+# 3. This copies your package.json from your linked GitHub repo
 COPY package*.json ./
 
-# Install dependencies
+# 4. Install dependencies (this will now work with glibc present)
 RUN npm install
 
-# Copy the rest of your code
+# 5. Copy your remaining code
 COPY . .
 
-# Start OpenClaw
-CMD ["npx", "openclaw", "start"]
+# 6. Configure the port Pxxl gave you
+ENV PORT=4734
+EXPOSE 4734
 
-Environment Variable: ENV PORT=4734
-
-Expose: EXPOSE 4734
-
-Start Command: CMD ["npx", "openclaw", "start", "--port", "4734"]
+# 7. Start the bot on the correct port
+CMD ["npx", "openclaw", "start", "--port", "4734"]
