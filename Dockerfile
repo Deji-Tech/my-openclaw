@@ -1,17 +1,25 @@
-FROM node:20-slim
+# Use a standard Debian-based Node image (NOT Alpine)
+FROM node:22-bookworm
 
-# Install Tailscale and dependencies
-RUN apt-get update && apt-get install -y curl tailscale openssh-client
+# Install the build tools OpenClaw needs to compile AI components
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    cmake \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY . .
+
+# Copy your package.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Create the start script
-RUN echo '#!/bin/sh\n\
-tailscaled --tun=userspace-networking & \n\
-tailscale up --authkey=$TS_AUTHKEY --hostname=openclaw-render\n\
-npx openclaw start' > /app/start.sh
-RUN chmod +x /app/start.sh
+# Copy the rest of your code
+COPY . .
 
-CMD ["/app/start.sh"]
+# Start OpenClaw
+CMD ["npx", "openclaw", "start"]
