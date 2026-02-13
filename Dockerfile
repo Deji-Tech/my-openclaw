@@ -1,30 +1,25 @@
-# 1. Use Debian Bookworm (includes glibc)
-FROM node:22-bookworm
+# 1. Use Debian Slim (includes glibc, avoids Alpine errors)
+FROM node:22-bookworm-slim
 
-# 2. Install EVERYTHING needed for node-llama-cpp
+# 2. Install only the essential build tools to save RAM
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     cmake \
     git \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# 3. Explicitly copy package.json from your repo
+# 3. Copy and install
 COPY package*.json ./
+RUN npm install --production
 
-# 4. Run install with verbose logs to see if it fails again
-RUN npm install --verbose
-
-# 5. Copy the rest of your files
 COPY . .
 
-# 6. Set the Pxxl Port
-ENV PORT=4734
-EXPOSE 4734
+# 4. Render provides a dynamic PORT variable automatically
+EXPOSE 10000
 
-# 7. Force OpenClaw to use the Pxxl port
-CMD ["npx", "openclaw", "start", "--port", "4734"]
+# 5. Start OpenClaw and tell it to use Render's dynamic port
+CMD ["sh", "-c", "npx openclaw start --port ${PORT:-10000}"]
