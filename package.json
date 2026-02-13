@@ -1,0 +1,10 @@
+{
+  "name": "openclaw-render",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx openclaw start"
+  },
+  "dependencies": {
+    "openclaw": "latest"
+  }
+}
